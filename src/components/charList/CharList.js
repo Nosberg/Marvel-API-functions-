@@ -4,6 +4,7 @@ import Spinner from '../spinner/Spinner';
 
 import './charList.scss';
 import ErrorMessage from '../errorMessage/ErrorMessage';
+import PropTypes from 'prop-types';
 
 class CharList extends Component {
     state = {
@@ -101,6 +102,10 @@ class CharList extends Component {
             </div>
         )
     }
+}
+
+CharList.propTypes = {
+    onCharSelected: PropTypes.func
 }
 
 export default CharList;
