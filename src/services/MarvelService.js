@@ -1,30 +1,36 @@
+import {useHttp} from '../hooks/http.hook.js';
 
-class MarvelService {
 
-    _apibase = 'https://gateway.marvel.com:443/v1/public/';
-    _apikey = 'apikey=3667c33483e21c61a3a360a877b318b2';
-    _offset = 210;
-    getResource = async (url) => {
-        let res = await fetch(url);
-    
-        if (!res.ok) {
-            throw new Error(`Coul not fetch ${url}, status : ${res.status}`);
-        }
-    
-        return await res.json();
+const useMarvelService = () => {
+
+    const {loading, request, error, clearError} = useHttp();
+
+    const _apibase = 'https://gateway.marvel.com:443/v1/public/';
+    const _apikey = 'apikey=3667c33483e21c61a3a360a877b318b2';
+    const _offset = 210;
+    const _offsetComics = 0;
+
+    const getAllCharacters = async (offset = _offset) => {
+        const res = await request(`${_apibase}characters?limit=9&offset=${offset}&${_apikey}`);
+        return res.data.results.map(_transformCharacter);
     }
 
-    getAllCharacters = async (offset = this._offset) => {
-        const res = await this.getResource(`${this._apibase}characters?limit=9&offset=${offset}&${this._apikey}`);
-        return res.data.results.map(this._transformCharacter);
+    const getCharacter = async (id) => {
+        const res =  await request(`${_apibase}characters/${id}?${_apikey}`);
+        return _transformCharacter(res.data.results[0]);
     }
 
-    getCharacter = async (id) => {
-        const res =  await this.getResource(`${this._apibase}characters/${id}?${this._apikey}`);
-        return this._transformCharacter(res.data.results[0]);
+    // const getComics = async () => {
+    //     const res = await request(`${_apibase}comics?limit=8&${_apikey}`);
+    //     return res.data.results;
+    // }
+
+    const getComics = async (offset = _offsetComics) => {
+        const res = await request(`${_apibase}comics?limit=8&offset=${offset}&${_apikey}`);
+        return res.data.results;
     }
 
-    _transformCharacter = (char) => {
+    const _transformCharacter = (char) => {
         if (char.description === '') {
             char.description = 'description is not found';
         }
@@ -42,6 +48,8 @@ class MarvelService {
             comics: char.comics.items
         }
     }
+
+    return {loading, error, getAllCharacters, getCharacter, clearError, getComics}
 }
 
-export default MarvelService;
+export default useMarvelService;
