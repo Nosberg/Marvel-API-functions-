@@ -30,6 +30,11 @@ const useMarvelService = () => {
         return res.data.results;
     }
 
+    const getComic = async (id) => {
+        const res = await request(`${_apibase}comics/${id}?${_apikey}`)
+        return res.data.results;
+    }
+
     const _transformCharacter = (char) => {
         if (char.description === '') {
             char.description = 'description is not found';
@@ -49,7 +54,7 @@ const useMarvelService = () => {
         }
     }
 
-    return {loading, error, getAllCharacters, getCharacter, clearError, getComics}
+    return {loading, error, getAllCharacters, getCharacter, clearError, getComics, getComic}
 }
 
 export default useMarvelService;
